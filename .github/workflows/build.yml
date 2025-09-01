@@ -23,4 +23,8 @@ jobs:
         with:
           files: hacker-dashboard.deb
         env:
+<<<<<<< HEAD
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+=======
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+>>>>>>> 804b373a610ac88e0fde0c4a91ed1c61605b4619
