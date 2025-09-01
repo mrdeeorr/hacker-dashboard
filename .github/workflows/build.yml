@@ -1,0 +1,26 @@
+name: Build and Release Hacker Dashboard
+
+on:
+  push:
+    tags:
+      - "v*"
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v3
+
+      - name: Build .deb package
+        run: |
+          chmod +x build.sh
+          ./build.sh
+
+      - name: Upload release
+        uses: softprops/action-gh-release@v1
+        with:
+          files: hacker-dashboard.deb
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

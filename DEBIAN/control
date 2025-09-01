@@ -1,0 +1,9 @@
+Package: hacker-dashboard
+Version: 3.2
+Section: utils
+Priority: optional
+Architecture: all
+Maintainer: You <you@example.com>
+Description: Termux Hacker Dashboard v3.2
+ All-in-one hacking & system toolkit for Termux.
+ Includes payload generator, listeners, persistence, logs, backups, and system utilities.

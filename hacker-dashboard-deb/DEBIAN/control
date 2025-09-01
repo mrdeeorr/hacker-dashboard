@@ -1,0 +1,6 @@
+Package: hacker-dashboard
+Version: 1.0
+Architecture: all
+Maintainer: mrdeeorr <your_email@example.com>
+Depends: curl, nmap, openssh, apache2, exploitdb
+Description: All-in-One Hacker Dashboard for Termux with auto-update, scanning, payload generation, and server tools.
